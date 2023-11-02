@@ -2,6 +2,7 @@ library(tidyverse)
 library(ggplot2)
 library(truncnorm)
 library(dplyr)
+library(ggpubr)
 
 #summary stats to create distributions for nonnatives
 func_data <- data.frame(Species = c('PYOL', 'MISA', 'MIDO', 'MOSA'),
@@ -60,6 +61,11 @@ for (i in 1:nrow(zone_data)) {
 # Combine the resulting dataframes into one dataframe
 dist <- do.call(rbind, result_list)
 
+hist <- ggplot(dist, aes(x = TotalLength, fill = Species)) + 
+  geom_histogram() + facet_grid(Species ~ Zone) + labs
+hist
+
+dist %>% group_by(Zone, Species) %>% summarize(n = n())
 #read in XYTE scan data
 data <- readRDS('For_model.rds')
 
@@ -82,10 +88,21 @@ for(i in 1:nrow(data)){
 data <- cbind(data, calc) #binds the results to the XYTE dataframe
 
 write_rds(data, 'final_dataset.rds')
+data <- readRDS('Processing_code/final_dataset.rds')
 boxplot_mean <- ggplot(data, aes(x = factor(Survivor), y = mean)) + 
-  geom_boxplot(aes(fill = ZONE)) + labs(x = 'Survived', y = 'Mean Predator TL (mm)')
+  geom_boxplot(aes(fill = ZONE)) + labs(x = 'Survived', y = 'Mean Predator TL (mm)') +
+  theme(axis.title.x = element_blank(), axis.text.x = element_blank(), axis.title.y = element_text(size=9),
+        plot.margin = margin(t = 0.1, r = 0.1, b = 0.3, l = 0.2, unit = 'cm'), axis.text.y = element_text(size = 8))
 boxplot_var <- ggplot(data, aes(x = factor(Survivor), y = var)) + 
-  geom_boxplot(aes(fill = ZONE)) + labs(x = 'Survived', y = 'Variance Predator TL (mm)')
+  geom_boxplot(aes(fill = ZONE)) + labs(x = 'Survived', y = 'Predator TL variance (mm)') +
+  theme(axis.title.x = element_blank(), axis.text.x = element_blank(), axis.title.y = element_text(size=9),
+        plot.margin = margin(t = 0.1, r = 0.1, b = 0.3, l = 0.1, unit = 'cm'), axis.text.y = element_text(size = 8))
 boxplot_n <- ggplot(data, aes(x = factor(Survivor), y = n)) + 
-  geom_boxplot(aes(fill = ZONE)) + labs(x = 'Survived', y = 'Number of Predators (mm)')
+  geom_boxplot(aes(fill = ZONE)) + labs(x = 'Survived', y = 'Number of Predators (mm)') +
+  theme(axis.title.y = element_text(size=9), plot.margin = margin(t = 0.1, r = 0.1, b = 0.1, l = 0.2, unit = 'cm'),
+        axis.text.y = element_text(size = 8),
+        axis.text.x = element_text(size = 8))
 
+all <- ggarrange(boxplot_mean, boxplot_var, boxplot_n, ncol = 1, nrow = 3, 
+                 common.legend = TRUE, legend = 'bottom')
+all

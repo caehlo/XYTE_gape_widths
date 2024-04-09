@@ -1,14 +1,8 @@
 # load packages
 library(dplyr)
 library(RMariaDB)
-library(ggplot2)
-library(readxl)
 library(lubridate)
 library(dbplyr)
-library(binom)
-library(readr)
-library(ggpubr)
-library(formattable)
 
 # make MySQL connection
 setwd("C:/Users/chase/OneDrive/Documents/Razorback_Sucker")

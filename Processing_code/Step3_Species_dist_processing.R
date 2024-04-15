@@ -62,17 +62,57 @@ for (i in 1:nrow(zone_data)) {
 dist <- do.call(rbind, result_list)
 
 hist <- ggplot(dist, aes(x = TotalLength, fill = Species)) + 
-  geom_histogram() + facet_grid(Species ~ Zone) + labs
+  geom_histogram() + facet_grid(Species ~ Zone) + labs()
 hist
 
-dist %>% group_by(Zone, Species) %>% summarize(n = n())
-#read in XYTE scan data
-data <- readRDS('For_model.rds')
+distsummary <- dist %>% group_by(Zone, Species) %>% 
+  summarize(n = n(), 
+            MeanTL = mean(TotalLength),
+            Variance = var(TotalLength))
 
+#read in XYTE scan data
+data <- readRDS('Processing_code/For_model.rds')
+
+datatest1 <- data %>%
+  ungroup() %>%
+  select(Release_Date, PIT, Primary, ZONE, TL_1) %>%
+  left_join(dist, by = c("Primary" = "Species", "ZONE" = "Zone"), relationship = "many-to-many") %>%
+  filter(TotalLength >= TL_1) %>%
+  group_by(Release_Date, PIT, ZONE) %>%
+  summarise(PrimaryMeanTL = mean(TotalLength),
+            PrimaryVarianceTL = var(TotalLength),
+            PrimaryN = n()) %>%
+  ungroup()
+
+datatest2 <- data %>%
+  ungroup() %>%
+  select(Release_Date, PIT, Secondary, ZONE, TL_2) %>%
+  left_join(dist, by = c("Secondary" = "Species", "ZONE" = "Zone"), relationship = "many-to-many") %>%
+  filter(TotalLength >= TL_2) %>%
+  group_by(Release_Date, PIT, ZONE) %>%
+  summarise(SecondaryMeanTL = mean(TotalLength),
+            SecondaryVarianceTL = var(TotalLength),
+            SecondaryN = n()) %>%
+  ungroup()
+
+datadump <- data %>%
+  left_join(datatest1 %>% 
+               select(Release_Date, PIT, ZONE, PrimaryMeanTL, PrimaryVarianceTL, PrimaryN),
+             by = c("Release_Date", "PIT", "ZONE")) %>%
+  left_join(datatest2 %>% 
+               select(Release_Date, PIT, ZONE, SecondaryMeanTL, SecondaryVarianceTL, SecondaryN),
+             by = c("Release_Date", "PIT", "ZONE"))
+               
+               
+  
+  
+  
 #create empty dataframe for results
 calc <- data.frame(Mean = numeric(),
                    Variance = numeric(),
                    n = numeric())
+
+
 #loop to calculate mean, variance, and number of nonnatives that can consume each individual XYTE
   #This is based on the minimum size TL of each predator that can consume each individual XYTE dependent on Zone
 for(i in 1:nrow(data)){

@@ -3,7 +3,7 @@ library(ggplot2)
 library(tidyverse)
 library(purrr)
 
-# creat a grid of Razorback TL and Predator TL by Zone to calculate dorso ventral heights and gape widths
+# create a grid of Razorback TL and Predator TL by Zone to calculate dorso-ventral heights and gape widths
 GW <- expand.grid(XYTE_TL = seq(300,600,1), SPECIES = c('MOSA', 'PYOL', 'MISA', 'MIDO'), PRED_TL = seq(100,1000,1))
 
 # each equation corresponds to a gape-width line equation for 4 different predators: 
@@ -33,7 +33,7 @@ GW <- GW %>% mutate(Secondary = SPECIES, Sec_min_TL = min_PRED_TL) %>%
   gather(key = 'Type', value = 'Min_TL', 2:3) %>% select(-Type)
 
 #read in preprocessed XYTE data which has several columns including a binomial survivor column
-XYTE <- readRDS('XYTE_scan_data.rds')
+XYTE <- readRDS('Processing_code/XYTE_scan_data.rds')
 
 #create new columns for primary and secondary predators by zone
 XYTE <- XYTE %>% filter(ZONE %in% c('3-1', '3-2', '2-1', '2-3')) %>% 

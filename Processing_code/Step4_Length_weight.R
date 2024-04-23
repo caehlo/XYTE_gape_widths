@@ -1,11 +1,11 @@
 library(readxl)
 library(tidyverse)
 
-flathead <- read_csv("flathead.csv") %>% 
+flathead <- read_csv("rawData/flathead.csv") %>% 
   mutate(Date = as.Date(Date, "%m/%d/%Y")) %>%
   mutate(PredMass = .000006*(TL^3.0997)) #length-weight relationship from Granfors (2014)
 
-others <- read_excel("Fish.xlsx") %>% mutate(Date = as.Date(substr(Date,1,6), "%y%m%d")) %>%
+others <- read_excel("rawData/Fish.xlsx") %>% mutate(Date = as.Date(substr(Date,1,6), "%y%m%d")) %>%
   mutate(Species = case_when(Species == 'Largemouth Bass' ~ 'MISA',
                              Species == 'Smallmouth Bass' ~ 'MIDO',
                              Species == 'Striped Bass' ~ 'MOSA')) %>%

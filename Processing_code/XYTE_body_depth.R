@@ -68,7 +68,4 @@ BD_plot
 
 BD_residuals_plot
 
-ggplot(your_data, aes(x = x, y = residuals)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
-  labs(x = "Predictor (x)", y = "Residuals", title = "Residual Plot")
+

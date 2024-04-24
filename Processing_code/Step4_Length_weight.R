@@ -1,7 +1,7 @@
 library(readxl)
 library(tidyverse)
 
-flathead <- read_csv("rawData/flathead.csv") %>% 
+flathead <- read_csv("raw_data/flathead.csv") %>% 
   mutate(Date = as.Date(Date, "%m/%d/%Y")) %>%
   mutate(PredMass = .000006*(TL^3.0997)) #length-weight relationship from Granfors (2014)
 

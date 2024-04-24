@@ -17,7 +17,7 @@ tl_bd_2004 <- function(TL){
 # 1984 data from Bozek et al. 1984? but raw data not reported.
 # 2005 data measured by B. Kesner from ASU museum specimens 
 XYTEBodyDepth <- 
-  read.csv("Processing_code/data/RazorbackSuckerBodyDepth.csv")
+  read.csv("raw_data/RazorbackSuckerBodyDepth.csv")
 
 TLBD_model <- BD_mm ~ TL_mm
 TLBD_model_transformed <- log(BD_mm) ~ TL_mm

@@ -10,7 +10,7 @@ library(dplyr)
 library(ggplot2)
 
 tl_bd_2004 <- function(TL){
-  BodyDepth <- 0.196*TL + 2.517
+  BodyDepth <- round(0.196*TL + 2.517, 1)
   return(BodyDepth)
 }
 
@@ -19,47 +19,25 @@ tl_bd_2004 <- function(TL){
 XYTEBodyDepth <- 
   read.csv("raw_data/RazorbackSuckerBodyDepth.csv")
 
-TLBD_model <- BD_mm ~ TL_mm
-TLBD_model_transformed <- log(BD_mm) ~ TL_mm
-TLBD_results <- glm(TLBD_model, data = XYTEBodyDepth)
-TLBD_t_results <- glm(TLBD_model_transformed, data = XYTEBodyDepth)
+TLBD_model <- lm(BD_mm ~ TL_mm, data = XYTEBodyDepth)
 
-XYTEBodyDepth$Residuals <- residuals(TLBD_results)
-XYTEBodyDepth$TResiduals <- residuals(TLBD_t_results)
+XYTEBodyDepth$Residuals <- residuals(TLBD_model)
+XYTEBodyDepth$PredDepth <- round(predict(TLBD_model, type = 'response'), 1)
 
-# Shapiro-Wilk test for normality
-shapiro.test(XYTEBodyDepth$Residuals)
-shapiro.test(XYTEBodyDepth$TResiduals)
-
-qqnorm(XYTEBodyDepth$Residuals)
-qqline(XYTEBodyDepth$Residuals)
-
-qqnorm(XYTEBodyDepth$TResiduals)
-qqline(XYTEBodyDepth$TResiduals)
-
-Intercept2024 <- coef(TLBD_results)[1] %>% as.double()
-Slope2024 <- coef(TLBD_results)[2] %>% as.double()
-
-Intercept2024T <- coef(TLBD_t_results)[1] %>% as.double()
-Slope2024T <- coef(TLBD_t_results)[2] %>% as.double()
-
-tl_bd_2024T <- function(TL){
-  BodyDepth <- Slope2024T*TL + Intercept2024T
-  return((BodyDepth)^exp())
-}
+coefBD <- bind_rows(coef(TLBD_model)) %>%
+  rename(SlopeBD = TL_mm, InterceptBD = `(Intercept)`)
 
 tl_bd_2024 <- function(TL){
-  BodyDepth <- Slope2024*TL + Intercept2024
+  BodyDepth <- round(coefBD$SlopeBD*TL + coefBD$InterceptBD, 1)
   return(BodyDepth)
 }
 
 BD_plot <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = BD_mm, color = Source)) +
   geom_point() +
   stat_function(fun = tl_bd_2004, color = "black") + 
-  stat_function(fun = tl_bd_2024T, color = "red") +
   stat_function(fun = tl_bd_2024, color = "white") 
 
-BD_residuals_plot <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = TResiduals, color = Source)) +
+BD_residuals_plot <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = Residuals, color = Source)) +
   geom_point() + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(x = "Total length (mm)", y = "Residuals", title = "Residual Plot")

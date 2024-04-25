@@ -49,12 +49,18 @@ for(i in unique(nonnatives$Species)){
 }
 
 withMass <- bind_rows(dataList) %>%
-  mutate(PredMass = exp(LogPredMass))
+  mutate(PredMass = round(exp(LogPredMass),0))
 
 LWCoeff <- bind_rows(coefList, .id = "Species")
 LWCoeff <- LWCoeff %>% 
-  rename(SlopeTL = LogTL, LogIntercept = `(Intercept)`) %>%
-  mutate(Intercept = exp(LogIntercept))
+  rename(SlopeTL = LogTL, LogInterceptTL = `(Intercept)`) %>%
+  mutate(InterceptTL = exp(LogInterceptTL))
+
+lw_nonnatives <- function(species, TL){
+  coeff = LWCoeff %>% filter(Species == species)
+  BodyDepth <- round(coeff$InterceptTL*TL^(coeff$SlopeTL), 0)
+  return(BodyDepth)
+}
 
 rm(dataList, coefList)
 

@@ -26,15 +26,17 @@ nonnatives <- rbind(lt_flathead, others)
 
 species = c('MIDO', 'MOSA', 'MISA', 'PYOL')
 dataList = list()
+coefList = list()
 
 for(i in species){
   temp <- nonnatives %>% filter(Species == i)
   model <- glm(Mass ~ TL, temp, family = poisson(link = "log"))
   temp$PredMass <- predict(model, newdata = temp, type = 'response')
-  dataList[[i]] <- list("data" = temp, "parameters" = coef(model))
+  dataList[[i]] <- temp
+  coefList[[i]] <- coef(model)
 }
 
-withMass <- bind_rows(dataList$data)
+withMass <- bind_rows(dataList)
 
 
 # nonnatives <- bind_rows(withMass, flathead)

@@ -37,12 +37,6 @@ nonnatives <- rbind(usfws_flathead, others) %>%
   filter(!is.na(TL), !is.na(Mass), TL >= 150) %>%
   mutate(LogTL = log(TL), LogMass = log(Mass))
 
-LoglwPlots <- ggplot(nonnatives, aes(x = LogTL, color = Species)) + 
-                     geom_point(aes(y = LogMass)) +
-                     facet_wrap(~Species)
-  
-LoglwPlots
-
 dataList = list()
 coefList = list()
 
@@ -59,7 +53,7 @@ withMass <- bind_rows(dataList) %>%
 
 LWCoeff <- bind_rows(coefList, .id = "Species")
 LWCoeff <- LWCoeff %>% 
-  rename(TL = LogTL, LogIntercept = `(Intercept)`) %>%
+  rename(SlopeTL = LogTL, LogIntercept = `(Intercept)`) %>%
   mutate(Intercept = exp(LogIntercept))
 
 rm(dataList, coefList)

@@ -61,14 +61,20 @@ lw_nonnatives <- function(species, TL){
   return(BodyDepth)
 }
 
-rm(dataList, coefList)
+rm(dataList, coefList, temp, model, others, lt_flathead, i, usfws_flathead, flathead)
 
 # nonnatives <- bind_rows(withMass, flathead)
 saveRDS(nonnatives, file = 'nonnatives.rds')
 saveRDS(LWCoeff, file = 'nonnativeslw.rds')
 
-ggplot(withMass, aes(x = TL, color = Species)) + geom_point(aes(y = Mass)) + geom_line(aes(y = PredMass)) +
+predator_lw_plot <- ggplot(withMass, aes(x = TL, color = Species)) + 
+  geom_point(aes(y = Mass)) + 
+  geom_line(aes(y = PredMass)) +
   facet_wrap(~Species, scales = 'free')
 
-ggplot(withMass, aes(x = LogTL, color = Species)) + geom_point(aes(y = LogMass)) + geom_line(aes(y = LogPredMass)) +
+predator_log_lw_plot <- ggplot(withMass, aes(x = LogTL, color = Species)) + 
+  geom_point(aes(y = LogMass)) + 
+  geom_line(aes(y = LogPredMass)) +
   facet_wrap(~Species, scales = 'free')
+
+rm(withMass, nonnatives)

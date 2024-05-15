@@ -10,8 +10,8 @@ equations <- list(MOSA = function(TL) {-1.502 + (0.125 * TL) - (0.000005 * TL^2)
                   MIDO = function(TL) {(0.13*TL) - 1.05})
 
 
-# Create an empty ggplot object
-gw_plot <- ggplot(data.frame(TL = seq(100,1500,5)), aes(x = TL)) +
+# Create a ggplot object
+predator_gw_plot <- ggplot(data.frame(TL = seq(100,1500,5)), aes(x = TL)) +
   stat_function(fun = equations$MOSA, aes(colour = "Striped bass (MOSA)")) +
   stat_function(fun = equations$PYOL, aes(colour = "Flathead catfish (PYOL)")) +
   stat_function(fun = equations$MISA, aes(colour = "Largemouth bass (MISA)")) +
@@ -19,16 +19,13 @@ gw_plot <- ggplot(data.frame(TL = seq(100,1500,5)), aes(x = TL)) +
   scale_colour_manual("Species", values = c("red", "green", "orange", "black")) +
   labs(x = "Total length (mm)", y = "Gape (mm)", title = "Predator gape width")
 
-gw_plot
-# Add each function to the plot
-
 
 # inverse function script to inverse Gape width formulas
-inverse <- function(f, lower, upper){
-  function(y){
-    uniroot(function(x){f(x) - y}, lower = lower, upper = upper, tol=1e-3)[1]
-  }
-}
+#inverse <- function(f, lower, upper){
+#  function(y){
+#    uniroot(function(x){f(x) - y}, lower = lower, upper = upper, tol=1e-3)[1]
+#  }
+# }
 
 # Instead of list of equations and a dataframe, generate a function with inputs
 # Species, TL, GWIndex. This will output the maximum XYTE TL that can be ingested based on data.
@@ -44,11 +41,7 @@ calculate_gape <- function(species, TL) {
 }
 
 
-min_ratio = .8
-max_ratio = 1.0
 
-edible_size <- bd_tl_2024(min_ratio * calculate_gape("MISA", 800))
-edible_size
 
 
 

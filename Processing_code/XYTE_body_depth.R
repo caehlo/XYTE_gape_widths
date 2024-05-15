@@ -36,19 +36,17 @@ bd_tl_2024 <- function(BD) {
   TL <- round((BD - coefBD$InterceptBD)/coefBD$SlopeBD, 1)
   return(TL)
 }
-BD_plot <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = BD_mm, color = Source)) +
+XYTE_bd_plot <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = BD_mm, color = Source)) +
   geom_point() +
   stat_function(fun = tl_bd_2004, color = "black") + 
   stat_function(fun = tl_bd_2024, color = "white") +
   labs(x = "Total length (mm)", y = "Body Depth (mm)", title = "Razorback sucker body depth")
 
-BD_residuals_plot <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = Residuals, color = Source)) +
+XYTE_bd_residuals <- ggplot(XYTEBodyDepth, aes(x = TL_mm, y = Residuals, color = Source)) +
   geom_point() + 
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   labs(x = "Total length (mm)", y = "Residuals", title = "Residual Plot")
 
-BD_plot
 
-BD_residuals_plot
-
+rm(tl_bd_2004, tl_bd_2024, XYTEBodyDepth, TLBD_model)
 

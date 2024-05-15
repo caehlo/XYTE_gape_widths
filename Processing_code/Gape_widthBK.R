@@ -30,9 +30,25 @@ inverse <- function(f, lower, upper){
   }
 }
 
+# Instead of list of equations and a dataframe, generate a function with inputs
+# Species, TL, GWIndex. This will output the maximum XYTE TL that can be ingested based on data.
 
-GW_index_min = 1.0
-GW_index_max = 1.2
+calculate_gape <- function(Species, TL) {
+  gape_value <- case_when(
+    Species == "MISA" ~ ((0.14*TL) - 5.59),
+    Species == "MOSA" ~ -1.502 + (0.125 * TL) - (0.000005 * TL^2),
+    Species == "MIDO" ~ (0.13*TL) - 1.05,
+    Species == "PYOL" ~ (123 * 2.718^(0.0008*TL)) - 119.3,
+    TRUE ~ NA_real_)
+  return(gape_value)
+}
+
+
+min_ratio = .8
+max_ratio = 1.0
+
+edible_size <- bd_tl_2024(Ratio * calculate_gape("MISA", 800))
+edible_size
 
 
 

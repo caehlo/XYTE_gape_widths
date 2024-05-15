@@ -2,7 +2,7 @@ library(readxl)
 library(gridExtra)
 library(ggplot2)
 
-flathead <- read_csv("raw_data/flathead.csv") %>% 
+flathead <- read.csv("raw_data/flathead.csv") %>% 
   mutate(Date = as.Date(Date, "%m/%d/%Y")) %>%
   mutate(PredMass = .000006*(TL^3.0997)) #length-weight relationship from Granfors (2014)
 

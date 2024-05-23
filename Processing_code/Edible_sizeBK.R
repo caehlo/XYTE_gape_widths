@@ -16,8 +16,10 @@ edible_size <- bd_tl_2024(min_prop * calculate_gape("MISA", 800))
 edible_size
 
 edible_size_df <- expand.grid(Species = Species, TL = seq(100,1400,10)) %>%
-  mutate(edible_min_prop = bd_tl_2024(min_prop * calculate_gape(Species, TL)))
+  mutate(edible_min_prop = bd_tl_2024(min_prop * calculate_gape(Species, TL)),
+         edible_max_prop = bd_tl_2024(max_prop * calculate_gape(Species, TL)))
 
 Edible_size_plot <- ggplot(edible_size_df, aes(x = TL, color = Species)) + 
-                    geom_line(aes(y = edible_min_prop))
+                    geom_line(aes(y = edible_min_prop)) +
+  geom_line(aes(y = edible_max_prop), linetype = "dashed")
 Edible_size_plot

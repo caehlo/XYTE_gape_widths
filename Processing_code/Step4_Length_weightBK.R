@@ -58,8 +58,8 @@ LWCoeff <- LWCoeff %>%
 
 lw_nonnatives <- function(species, TL){
   coeff = LWCoeff %>% filter(Species == species)
-  BodyDepth <- round(coeff$InterceptTL*TL^(coeff$SlopeTL), 0)
-  return(BodyDepth)
+  Mass <- round(coeff$InterceptTL*TL^(coeff$SlopeTL), 0)
+  return(Mass)
 }
 
 rm(dataList, coefList)

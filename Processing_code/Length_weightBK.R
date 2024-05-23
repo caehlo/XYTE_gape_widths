@@ -1,6 +1,7 @@
 library(readxl)
 library(gridExtra)
 library(ggplot2)
+library(tidyverse)
 
 flathead <- read.csv("raw_data/flathead.csv") %>% 
   mutate(Date = as.Date(Date, "%m/%d/%Y")) %>%
